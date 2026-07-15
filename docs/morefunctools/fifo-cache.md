@@ -37,7 +37,7 @@ def cache_entries() -> tuple[*tuple[Any, Any]]:
     ...
 ```
 
-!!! warning Warning &mdash; Usage
+!!! warning "Warning &mdash; Usage"
     Please note that `@fifo_cache()` needs to be used with parantheses. It will not work otherwise.
 
 ## Example usage
