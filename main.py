@@ -7,6 +7,10 @@ from morefunctools import experimental
 def test(a, **kwargs):
     return 2 + a
 
+@cache.fifo_cache(True)
+def add(a, b):
+    return a + b
+
 @experimental
 def main():
     values = [1, 2, 3, 4, 5]
@@ -24,6 +28,9 @@ def main():
     print(test(1, test = "test"))
     print(test(2))
     print(test(1))
+
+    add(1, 2)
+    print(add.cache_info())  
 
 if __name__ == "__main__":
     main()
