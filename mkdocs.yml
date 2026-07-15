@@ -52,3 +52,4 @@ nav:
     - Home: morefunctools/index.md
     - API:
       - morefunctools.experimental: morefunctools/experimental.md
+      - morefunctools.fifo_cache: morefunctools/fifo-cache.md
