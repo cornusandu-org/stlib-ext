@@ -1,7 +1,7 @@
 import math
 from functools import lru_cache
 from functools import wraps
-from typing import Optional, Any
+from typing import Any, overload
 from collections.abc import Callable
 from moretyping.visualise import VisLink
 from .pyexperimental import experimental
@@ -29,8 +29,16 @@ class CacheInfo:
     def __str__(self) -> str:
         return f"CacheInfo(hits={self.hits}, misses={self.misses}, maxsize={self.maxsize}, currsize={self.currsize})"
 
-@experimental
+@overload
+def fifo_cache(function: Callable) -> Callable:
+    ...
+
+@overload
 def fifo_cache(maxsize: MaxSize = True) -> Callable[[Callable], Callable]:
+    ...
+
+@experimental
+def fifo_cache(maxsize: MaxSize | Callable = True) -> Callable[[Callable], Callable]:
     if isinstance(maxsize, bool):
         maxsize = math.inf if maxsize else 1
 
@@ -41,7 +49,9 @@ def fifo_cache(maxsize: MaxSize = True) -> Callable[[Callable], Callable]:
         hits, misses = 0, 0
 
         def cache_clear() -> None:
+            global cache, cacheList
             cache = {}
+            cacheList = deque()
 
         def cache_info() -> CacheInfo:
             info = CacheInfo(hits = hits, misses = misses, maxsize = maxsize, currsize = len(cache.keys()))
@@ -54,7 +64,7 @@ def fifo_cache(maxsize: MaxSize = True) -> Callable[[Callable], Callable]:
         @wraps(function)
         def wrapper(*args, **kwargs) -> Any:
             nonlocal hits, misses
-            key = VisLink((tuple(args), tuple(kwargs.items()))).string
+            key = str(args, tuple(kwargs.items()))
             if key in cache.keys():
                 hits += 1
                 return cache.get(key)
@@ -65,6 +75,7 @@ def fifo_cache(maxsize: MaxSize = True) -> Callable[[Callable], Callable]:
             cacheList.append(key)
             cache[key] = value
 
+            # Remove cache items to reduce size usage
             if len(cacheList) > maxsize:
                 removalKey = cacheList.popleft()
                 cache.pop(removalKey)
@@ -76,5 +87,8 @@ def fifo_cache(maxsize: MaxSize = True) -> Callable[[Callable], Callable]:
         wrapper.cache_entries = cache_entries
 
         return wrapper
+    
+    if callable(maxsize):
+        return decorator(maxsize)  # in case of @fifo_cache instead of @fifo_cache()
     
     return decorator

@@ -25,6 +25,10 @@ Returns `Numeric` &mdash; the integer/float created from `value`
 
 : If the value can't be cast to a numeric type.
 
+`TypeError`
+
+: If the value is `None`
+
 ## Details
 
 If the value is an integer, return it unchanged.

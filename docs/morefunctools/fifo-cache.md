@@ -3,8 +3,13 @@
 ## Annotations
 
 ```python
-@experimental
+@overload
+def fifo_cache(function: Callable) -> Callable:
+    ...
+
+@overload
 def fifo_cache(maxsize: MaxSize = True) -> Callable[[Callable], Callable]:
+    ...
 ```
 
 ## Parameters

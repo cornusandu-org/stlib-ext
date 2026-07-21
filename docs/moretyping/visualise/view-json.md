@@ -10,6 +10,12 @@ class ViewJSON(metaclass=VisualiseMeta):
     @cached_property
     def string(self) -> str:
         ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __repr__(self) -> str:
+        ...
 ```
 
 ## Parameters
