@@ -40,6 +40,10 @@ Before submitting a PR, run `mypy` to ensure there are no issues with your code.
 
 Use type annotations wherever possible. Example: `collections.abc.Callable`, `typing.Optional`, `collections.abc.Iterable`, `typing.Any`, etc.
 
+## 3: Tests
+
+Always write tests for your code. You can run the tests with `python -m tests` (or, alternatively, `pytest -vv`).
+
 # 6. Contributors
 
 1. [@cornusandu](https://github.com/cornusandu)
