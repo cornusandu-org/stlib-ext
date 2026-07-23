@@ -9,7 +9,7 @@ class VisLink(metaclass=VisualiseMeta):
 
     @cached_property
     def strdata(self) -> Iterable[str]:
-        return map(lambda x: str(x), self.data)
+        return map(lambda x: str(x).replace("\\", "\\\\").replace(">", "\\>"), self.data)
 
     @cached_property
     def string(self) -> str:

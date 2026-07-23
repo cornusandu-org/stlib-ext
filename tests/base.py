@@ -18,6 +18,7 @@ class _TestSuite:
         if targets is None or len(targets) == 0:
             warnings.warn(f"{cls.__name__} is defined as a test suite, but has no test targets. Please define __targets__", RuntimeWarning)
             cls.__targets__ = tuple()
+            targets = tuple()
 
         for func in targets:
             func.__test__ = True
@@ -37,4 +38,4 @@ def static_mark_parametrize(*args, **kwargs):
 if __name__ == "__main__":
     import os
 
-    os.system("pytest -v")
+    os.system("pytest -vv")

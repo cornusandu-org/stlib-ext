@@ -1,5 +1,5 @@
 from tests.base import _TestSuite, static_mark_parametrize
-from src import moretyping
+import moretyping
 import pytest
 
 class DataTests(_TestSuite):
@@ -73,3 +73,74 @@ class DataTests(_TestSuite):
         __targets__ = (Conversions, InstanceChecks)
     
     __targets__ = (Number,)
+
+class VisTests(_TestSuite):
+    class VisLink(_TestSuite):
+        @static_mark_parametrize("inputList, outputRepr", [
+            ([1, 2, 3], "[ 1 > 2 > 3 ]"),
+            (['a', 'b', 'c'], "[ a > b > c ]"),
+            (['hello', 'world'], "[ hello > world ]"),
+            ([-0.1, 0.0, 0.1], "[ -0.1 > 0.0 > 0.1 ]")
+        ])
+        def test_standard(inputList, outputRepr):
+            assert str(moretyping.vis.VisLink(inputList)) == outputRepr
+
+        @static_mark_parametrize("inputList, outputRepr", [
+            ([1, 2, 3], "[ 1 > 2 > 3 ]"),
+            (['a', 'b', 'c'], "[ a > b > c ]"),
+            (['hello', 'world'], "[ hello > world ]"),
+            ([-0.1, 0.0, 0.1], "[ -0.1 > 0.0 > 0.1 ]")
+        ])
+        def test_string_property(inputList, outputRepr):
+            assert moretyping.vis.VisLink(inputList).string == outputRepr
+
+        @static_mark_parametrize("inputList, outputRepr", [
+            ([('a', 'b'), -0.3, "apple", ...], "[ ('a', 'b') > -0.3 > apple > Ellipsis ]"),
+            (["apple > watermelon", "pear"], "[ apple \\> watermelon > pear ]"),
+            (["apple", "watermelon > pear"], "[ apple > watermelon \\> pear ]"),
+            (["test > apple"], "[ test \\> apple ]"),
+            (["test \\> apple"], "[ test \\\\\\> apple ]"),
+            (["test \\", "apple"], "[ test \\\\ > apple ]")
+        ])
+        def test_weird(inputList, outputRepr):  # This is because people *will* try to break things
+            assert str(moretyping.vis.VisLink(inputList)) == outputRepr
+
+        __targets__ = (test_standard, test_weird, test_string_property)
+
+    class ViewJSON(_TestSuite):
+        @static_mark_parametrize("primitive, expected", [(0, "0"), (2, "2"), ("test", "\"test\""), (-0.3, "-0.3")])
+        def test_primitive(primitive, expected):
+            assert moretyping.vis.ViewJSON(primitive).string == expected
+
+        @staticmethod
+        def test_basic_1():
+            assert moretyping.vis.ViewJSON([1, 2, 3]).string == "[\n    1,\n    2,\n    3\n]"
+
+        @staticmethod
+        def test_basic_2():
+            assert str(moretyping.vis.ViewJSON({'name': 'Bob', 'age': 28})) == """{\n    "name": "Bob",\n    "age": 28\n}"""
+
+        @staticmethod
+        def test_complex():
+            inputData = [1, 2, 3, "abc", {"name": "Bob", "age": 28, "hobbies": ['basketball', 'volley']}]
+            outputJSON = moretyping.vis.ViewJSON(inputData).string
+            expectedJSON = """[
+    1,
+    2,
+    3,
+    "abc",
+    {
+        "name": "Bob",
+        "age": 28,
+        "hobbies": [
+            "basketball",
+            "volley"
+        ]
+    }
+]"""
+
+            assert outputJSON == expectedJSON
+
+        __targets__ = (test_primitive, test_basic_1, test_basic_2, test_complex)
+
+    __targets__ = (VisLink, ViewJSON)
