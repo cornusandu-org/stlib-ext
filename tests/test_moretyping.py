@@ -33,12 +33,13 @@ class DataTests(_TestSuite):
                 [
                     ("0", 0.0),
                     ("-1.3", -1.3),
-                    ("1", 1),
+                    ("1", 1.0),
                     ("2.3", 2.3)
                 ])
             def str_to_float(self, inputData, expected):
                 out = moretyping.data.Number(inputData)
                 assert out == expected
+                assert type(out) == type(expected)
 
             @pytest.mark.parametrize("invalidInputData", ["s", "avc", "0x2", "1823f"])
             def invalid_str(self, invalidInputData):
