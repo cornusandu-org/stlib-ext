@@ -4,7 +4,7 @@ from functools import cached_property
 from collections.abc import Iterable
 
 class VisLink(metaclass=VisualiseMeta):
-    def __init__(self, data: list[Any]) -> None:
+    def __init__(self, data: Iterable[Any]) -> None:
         self.data = tuple(data)
 
     @cached_property

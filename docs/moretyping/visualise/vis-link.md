@@ -4,7 +4,7 @@
 
 ```python
 class VisLink(metaclass=VisualiseMeta):
-    def __init__(self, data: list[Any]) -> None:
+    def __init__(self, data: Iterable[Any]) -> None:
         ...
 
     @cached_property
@@ -24,8 +24,8 @@ class VisLink(metaclass=VisualiseMeta):
 
 ## Parameters
 
-`data: list[Any]`
-: A list of objects of any kind.
+`data: Iterable[Any]`
+: Any iterable object of any type.
 
 ## Return Value
 
