@@ -1,4 +1,4 @@
-from tests.base import _TestSuite
+from tests.base import _TestSuite, static_mark_parametrize
 from src import moretyping
 import pytest
 
@@ -49,11 +49,27 @@ class DataTests(_TestSuite):
                 with pytest.raises(TypeError):
                     moretyping.data.Number(None)
 
-            def test_something(self):
-                ...
-
             __targets__ = (int_to_int, float_to_float, str_to_float, invalid_str, invalid_type)
-            
-        __targets__ = (Conversions,)
+
+        class InstanceChecks(_TestSuite):
+            @static_mark_parametrize("inputInt", [-100, 83, 0, -2, 2])
+            def check_int(inputInt):
+                assert isinstance(inputInt, moretyping.data.Number)
+
+            @static_mark_parametrize("inputFloat", [-100.0, 83.0, 0.0, -2.1, 2.9])
+            def check_float(inputFloat):
+                assert isinstance(inputFloat, moretyping.data.Number)
+
+            @static_mark_parametrize("inputString", ["3", "0", "1.0", "-1", "2.9"])
+            def check_str(inputString):
+                assert not isinstance(inputString, moretyping.data.Number)
+
+            @static_mark_parametrize("invalidData", [None, lambda x: x, type('EmptyClass', (), {})])
+            def check_invalid_types(invalidData):
+                assert not isinstance(invalidData, moretyping.data.Number)
+
+            __targets__ = (check_int, check_float, check_str, check_invalid_types)
+        
+        __targets__ = (Conversions, InstanceChecks)
     
     __targets__ = (Number,)
