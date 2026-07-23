@@ -64,7 +64,7 @@ def fifo_cache(maxsize: MaxSize | Callable = True) -> Callable[[Callable], Calla
         @wraps(function)
         def wrapper(*args, **kwargs) -> Any:
             nonlocal hits, misses
-            key = str(args, tuple(kwargs.items()))
+            key = str((args, tuple(kwargs.items())))
             if key in cache.keys():
                 hits += 1
                 return cache.get(key)
