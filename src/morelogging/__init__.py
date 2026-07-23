@@ -108,5 +108,5 @@ class LogStream:
         for handler in self.handlers.values():
             handler.push(item)
 
-    def log(self, mesage: str) -> None:
-
+    def log(self, level: LogLevel, message: str) -> None:
+        self._add_item([level, message])
