@@ -55,6 +55,8 @@ class LogHandler(ABC):
         self._connect_hook: list[Any] | None = None
         self._position = 0
 
+        self.auto_run = True
+
     @cached_property
     def identifier(self) -> str:
         return hashlib.sha3_512(str((self.name, self.uuid)).encode('utf8'))
@@ -85,9 +87,13 @@ class LogHandler(ABC):
             return
 
         while self._position < len(self._connect_hook) - 1:
-            self._push(self._connect_hook[self._position])
+            # TODO: Move this and _push code into __internal_push
+            self.commit(self.format(self._connect_hook[self._position]))
+            self._position += 1
 
     def _push(self, log: Log) -> None:
+        if not self.auto_run:
+            return
         self.commit(self.format(log))
         self._position += 1
 
