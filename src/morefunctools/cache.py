@@ -79,7 +79,7 @@ def fifo_cache(maxsize: MaxSize | Callable = True) -> Callable[[Callable], Calla
         @wraps(function)
         def wrapper(*args: Unknown, **kwargs: Unknown) -> Any:
             nonlocal hits, misses
-            key = str((args, tuple(kwargs.items())))
+            key = (args, tuple(kwargs.items()))  # TODO: Deepcopy each value
             if key in cache.keys():
                 hits += 1
                 return cache.get(key)
