@@ -12,6 +12,7 @@ from moretyping.meta import Unknown
 import sys
 from copy import deepcopy
 
+# TODO: Switch to something that lets users add new log levels
 class LogLevel(str, Enum):
     DEBUG = "DEBUG"
     INFO = "INFO"
@@ -110,6 +111,8 @@ class LogHandler(ABC):
             raise RuntimeError(f"Attempted to modify immutable property LogHandler.{name} to '{value}'.")
         self.__dict__[name] = value
 
+# TODO: Add coloring
+# TODO: Have this be the default handler for all loggers
 class SimpleLogHandler(LogHandler):
     def format(self, log: Log) -> str:
         return f"{log.level.value} {log.message} {' '.join(map(lambda x: str(x), log.objects))}"
@@ -150,6 +153,11 @@ class LogStream:
         else:
             raise KeyError(f"Attempted to remove handler with identifier {handler_id} form log stream {self.name} ({self.identifier}), meanwhile {handler_id} was not found.")
 
+    def clear_handlers(self) -> list[LogHandler]:
+        h = list(self.handlers.values())
+        self.handlers.clear()
+        return h
+
     def __setattr__(self, name: str, value: Unknown) -> None:
         if name in {'name', 'uuid'}:
             raise RuntimeError(f"Attempted to modify immutable property {self.__class__.__name__}.{name} to '{value}'.")
@@ -162,6 +170,47 @@ class LogStream:
 
     def log(self, level: LogLevel, message: str, *objects: Optional[Iterable[Any]]) -> None:
         self._add_item(Log(level=level, message=message, objects=objects or []))
+
+class Logger:
+    @notimplemented
+    def __init__(self, name: str) -> None:
+        ...
+
+    @notimplemented
+    def add_handler(self, handler: LogHandler) -> str:
+        ...
+
+    @notimplemented
+    def remove_handler(self, handler_id: str) -> LogHandler:
+        ...
+
+    @notimplemented
+    def clear_handlers(self) -> list[LogHandler]:
+        ...
+
+    @notimplemented
+    def log(self, level: LogLevel, message: str | Unknown, *objects: Optional[Iterable[Any]]) -> None:
+        ...
+
+    @notimplemented
+    def debug(self, message: str, *objects: Optional[Iterable[Any]]) -> None:
+        ...
+
+    @notimplemented
+    def info(self, message: str, *objects: Optional[Iterable[Any]]) -> None:
+        ...
+    
+    @notimplemented
+    def warning(self, message: str, *objects: Optional[Iterable[Any]]) -> None:
+        ...
+    
+    @notimplemented
+    def error(self, message: str | Unknown, *objects: Optional[Iterable[Any]]) -> None:
+        ...
+    
+    @notimplemented
+    def critical(self, message: str | Unknown, *objects: Optional[Iterable[Any]]) -> None:
+        ...
 
 if __name__ == "__main__":
     if not __debug__:
