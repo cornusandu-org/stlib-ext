@@ -52,7 +52,10 @@ def fifo_cache(maxsize: MaxSize | Callable = True) -> Callable[[Callable], Calla
         realmaxsize = int(maxsize)
     if isinstance(maxsize, int) and maxsize <= 0:
         warnings.warn(f"Invalid fifo_cache maxsize: {maxsize}")
-    
+    elif maxsize is None:
+        warnings.warn(f"Invalid fifo_cache maxsize: {maxsize} of type {maxsize.__class__.__name__}")
+    elif isinstance(maxsize, float):
+        warnings.warn(f"Invalid fifo_cache maxsize: {maxsize} of type {maxsize.__class__.__name__}")
 
     def decorator(function: Callable) -> Callable:
         cache: dict[str, Any] = {}
